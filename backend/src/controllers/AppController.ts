@@ -1,12 +1,12 @@
-import Scraper from '../services/scraper.js';
+import Scraper from '../services/Scraper';
+import { Request, Response } from 'express';
 
 
 export default class AppController {
-    static async getSearchResults(req, res) {
+    static async getSearchResults(req: Request, res: Response) {
         try {
             // make check for search param must be string and not empty
-            console.log(req.query)
-            const search_param = req.query.value
+            const search_param: string = req.query.value as string;
             await Scraper.search(search_param);
             res.status(200).json({ message: "Screenshots taken successfully" });
         } catch (error) {

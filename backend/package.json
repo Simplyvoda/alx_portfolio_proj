@@ -2,10 +2,10 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "backend files for price checker project",
-  "main": "routes/index.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node server.js",
-    "start-server": "node server.js"
+    "start": "node src/server.ts",
+    "start-server": "node src/server.ts"
   },
   "author": "efem.vodina@gmail.com",
   "license": "ISC",
@@ -15,5 +15,11 @@
     "mongodb": "^6.6.1",
     "puppeteer": "^22.8.0"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.12",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.4.5"
+  }
 }
