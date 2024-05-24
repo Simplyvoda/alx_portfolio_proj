@@ -1,0 +1,56 @@
+[
+  {
+    "title": "Next.js From Scratch 2024",
+    "level": "ALL LEVELS",
+    "url": "https://www.traversymedia.com/nextjs-from-scratch",
+    "image": "https://res.cloudinary.com/traversy-media/image/upload/v1708431914/next-logo_qbhst2.png"
+  },
+  {
+    "title": "PHP From Scratch 2024",
+    "level": "ALL LEVELS",
+    "url": "https://www.traversymedia.com/php-from-scratch",
+    "image": "https://res.cloudinary.com/traversy-media/image/upload/v1701697032/phplogo_evzxke.png"
+  },
+  {
+    "title": "70+ JS Challenges: Data Structures & Algorithms",
+    "level": "INTERMEDIATE",
+    "url": "https://www.traversymedia.com/javascript-challeges",
+    "image": "https://res.cloudinary.com/traversy-dev/image/upload/v1694022110/dsa_jhlwxc.png"
+  },
+  {
+    "title": "Modern JavaScript From The Beginning 2.0",
+    "level": "ALL LEVELS",
+    "url": "https://traversymedia.com/modern-javascript-2-0",
+    "image": "https://s3.amazonaws.com/kajabi-storefronts-production/file-uploads/themes/2152537062/settings_images/3e073-4fe-315-d6bf-b660bfd35038_js_small_main.png"
+  },
+  {
+    "title": "React Front To Back",
+    "level": "BEGINNER - INTERMEDIATE",
+    "url": "https://traversymedia.com/Modern-React-Front-To-Back-Course",
+    "image": "https://s3.amazonaws.com/kajabi-storefronts-production/themes/2152537062/settings_images/C5TfDxu9Qy6wYZ9HtP1S_react_front_to_back_small.png"
+  },
+  {
+    "title": "50 Projects in 50 Days - HTML, CSS & JavaScript",
+    "level": "ALL LEVELS",
+    "url": "https://traversymedia.com/50-Projects-In-50-Days",
+    "image": "https://s3.amazonaws.com/kajabi-storefronts-production/themes/2152537062/settings_images/5d0R4AgbR0KEBShyUwVG_50projects_small.png"
+  },
+  {
+    "title": "Modern HTML & CSS From The Beginning",
+    "level": "BEGINNER",
+    "url": "https://traversymedia.com/modern-html-css-course",
+    "image": "https://s3.amazonaws.com/kajabi-storefronts-production/themes/2152537062/settings_images/8efVSKZSf6CkvnyI2nJh_html_small.png"
+  },
+  {
+    "title": "Node.js API Masterclass",
+    "level": "INTERMEDIATE",
+    "url": "https://traversymedia.com/node-js-api-masterclass",
+    "image": "https://s3.amazonaws.com/kajabi-storefronts-production/themes/2152537062/settings_images/obc3aXcTWOGWln4iEM7o_node_small.png"
+  },
+  {
+    "title": "MERN From Scratch\neCommerce Platform",
+    "level": "INTERMEDIATE",
+    "url": "https://www.traversymedia.com/mern-stack-from-scratch",
+    "image": "https://res.cloudinary.com/traversy-media/image/upload/v1682799720/kajabi-website/mern_xnfncj.png"
+  }
+]

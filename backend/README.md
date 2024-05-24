@@ -1,0 +1,1 @@
+# Backend Folder for Price Checker Project
