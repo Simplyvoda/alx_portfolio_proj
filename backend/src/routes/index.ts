@@ -8,6 +8,9 @@ const router = express.Router();
 // POST /create_user => UserController.createUser
 router.post('/api/create_user', UsersController.createUser);
 
+// POST /login => UserController.createUser
+router.post('/api/login', UsersController.loginUser);
+
 // GET /search results => AppController.getStatus
 router.get('/api/search', AppController.getSearchResults);
 

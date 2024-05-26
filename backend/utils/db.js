@@ -44,11 +44,11 @@ class DBClient {
 
 
   async countUsers() {
-    return this.client.db().collection('users').countDocuments();
+    return this.client.db('price_falcon').collection('users').countDocuments();
   }
 
   async usersCollection() {
-    return this.client.db().collection('users');
+    return this.client.db('price_falcon').collection('users');
   }
 }
 

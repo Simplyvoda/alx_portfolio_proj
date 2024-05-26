@@ -9,11 +9,12 @@ const app = express();
 
 const port = process.env.PORT || 4001;
 
-// Use body-parser middleware
+// Use middleware
 app.use(bodyParser.json());
-app.use(cookieParser());
+// app.use(cookieParser());
 app.use(express.json());
-app.use(session());
+app.use(express.urlencoded({ extended: true }));
+// app.use(session());
 
 // load all routes from routes/index.js
 app.use(routes);
@@ -26,7 +27,7 @@ async function startServer() {
     // check if database is alive
     dbClient.isAlive();
 
-    // check for users collection in database
+    // check for users collection in database -- take out later
     const users = dbClient.countUsers().then((users) => console.log(users));
   } catch (err) {
     console.error("Error connecting to database:", err);
