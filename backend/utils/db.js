@@ -7,26 +7,50 @@ config();
 // get connection string from env file
 const uri = process.env.DB_URI;
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
-});
 
-// connect to db server
-async function run() {
-  try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
+class DBClient {
+  constructor() {
+    this.client = new MongoClient(uri, {
+      serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+      }
+    });
+  }
+
+  async connect() {
+    try {
+      await this.client.connect();
+      console.log("Connected to DB");
+      return true;
+    } catch (e) {
+      console.log("Connection failed", e);
+      return false;
+    }
+  }
+
+  isAlive() {
+    this.client.connect().then((isConnected) => {
+      if (isConnected) {
+        console.log("Connection to the database was successful!");
+        return true;
+      } else {
+        console.log("Failed to connect to the database.");
+        return false;
+      }
+    });
+  }
+
+
+  async countUsers() {
+    return this.client.db().collection('users').countDocuments();
+  }
+
+  async usersCollection() {
+    return this.client.db().collection('users');
   }
 }
-run().catch(console.dir);
+
+export const dbClient = new DBClient();
+export default dbClient;

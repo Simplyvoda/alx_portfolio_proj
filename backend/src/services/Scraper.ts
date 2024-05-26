@@ -5,7 +5,7 @@ export default class Scraper {
     let browser;
     try {
       browser = await puppeteer.launch({
-        headless: false,
+        headless: true,
         args: ["--disable-notifications"],
       });
 
@@ -44,12 +44,21 @@ export default class Scraper {
           await superMartPage.keyboard.press("Enter");
           await superMartPage.waitForNavigation({ waitUntil: "networkidle2" });
 
-          // handle results, add to array and store in databse
-          await superMartPage.screenshot({
-            path: "supermart_example.png",
-            fullPage: true,
-          });
-        };
+
+
+          const superMartSearchItems = await superMartPage.evaluate(() => 
+            Array.from(document.querySelectorAll('.product-block .product-block__inner'), (e: any) => ({
+              title: e?.querySelector('.product-block__title-price .title')?.innerText,
+              link: e?.querySelector('.product-block__title-price .title')?.href,
+              price: e?.querySelector('.product-block__title-price .price span').innerText,
+              image: e?.querySelector('.image--shape-1 .rimage__image').getAttribute('src'),
+            })
+          
+          ));
+          console.log(superMartSearchItems);
+
+          return superMartSearchItems;
+        }
 
         const pricePallySearch = async () => {
           pricePallyPage.on("dialog", async (dialog) => {
@@ -77,12 +86,33 @@ export default class Scraper {
           await pricePallyPage.keyboard.press("Enter");
           await pricePallyPage.waitForNavigation({ waitUntil: "networkidle2" });
 
-          // handle results, add to array and store in databse
-          await pricePallyPage.screenshot({
-            path: "pricepally_example.png",
-            fullPage: true,
-          });
+          // // handle results, add to array and store in databse
+          // const pricePallySearchItems = await pricePallyPage.evaluate(() => 
+
+          //   Array.from(document.querySelectorAll('.w-full.rounded-t.overflow-hidden'), (e: any) => ({
+          //     title: e?.querySelector('.lg:fs-700.text-[#333333].fs-500.fw-500.text-ellipsis.overflow-hidden.whitespace-nowrap')?.innerText,
+          //     link: e?.querySelector('a')?.href,
+          //     price: e?.querySelector('.fs-600.lg:text-lg.fw-600').innerText,
+          //     image: e?.querySelector('img').getAttribute('src'),
+          //   }))
+          // );
+
+          // handle results, add to array and store in database
+          const pricePallySearchItems = await pricePallyPage.evaluate(() => 
+            Array.from(document.querySelectorAll('.w-full.rounded-t.overflow-hidden'), (e: any) => ({
+              title: e?.querySelector('[class*="lg:fs-700"][class*="text-[#333333]"][class*="fs-500"][class*="fw-500"][class*="text-ellipsis"][class*="overflow-hidden"][class*="whitespace-nowrap"]')?.innerText,
+              link: e?.querySelector('a')?.href,
+              price: e?.querySelector('[class*="fs-600"][class*="lg:text-lg"][class*="fw-600"]')?.innerText,
+              image: e?.querySelector('img')?.getAttribute('src'),
+            }))
+          );
+
+          
+          console.log(pricePallySearchItems);
+
+          return pricePallySearchItems;
         };
+          
 
         const [superMartSearchResults, pricePallySearchResults] =
           await Promise.all([superMartSearch(), pricePallySearch()]);
