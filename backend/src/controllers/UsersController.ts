@@ -51,11 +51,14 @@ export default class UsersController {
       // }
 
       res.status(201).json({
-        id: generatedId,
-        email: newUser.email,
-        username: newUser.username,
-        createdAt: newUser.createdAt,
-        updatedAt: newUser.updatedAt,
+        message: "User created successfully",
+        data: {
+          id: generatedId,
+          email: newUser.email,
+          username: newUser.username,
+          createdAt: newUser.createdAt,
+          updatedAt: newUser.updatedAt,
+        },
       });
     }
   }
@@ -66,8 +69,7 @@ export default class UsersController {
    * @param {Response} res - The response object.
    * @returns {void}
    */
-
-  static async loginUser(req: Request, res: Response):Promise<void>  {
+  static async loginUser(req: Request, res: Response): Promise<void> {
     const username = req.body ? req.body.username : null;
     const password = req.body ? req.body.password : null;
 
@@ -96,11 +98,14 @@ export default class UsersController {
       return;
     } else {
       res.status(200).json({
-        id: user._id.toString(),
-        email: user.email,
-        username: user.username,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
+        message: "User logged in successfully",
+        data: {
+          id: user._id.toString(),
+          email: user.email,
+          username: user.username,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+        },
       });
     }
   }
@@ -113,7 +118,20 @@ export default class UsersController {
    */
   static async getUsers(req: Request, res: Response): Promise<void> {
     const users = await (await dbClient.usersCollection()).find().toArray();
-    res.status(200).json(users);
+    if (users) {
+      const all_users = users.map((user) => {
+        return {
+          id: user._id.toString(),
+          email: user.email,
+          username: user.username,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+        };
+      });
+      res.status(200).json({ message: "Users fetched", data: all_users });
+    } else {
+      res.status(500).json({ error: "An error occurred" });
+    }
   }
 
   /**
@@ -122,7 +140,7 @@ export default class UsersController {
    * @param {Response} res - The response object.
    * @returns {void}
    */
-  static async getUser(req: Request, res: Response):Promise<void> {
+  static async getUser(req: Request, res: Response): Promise<void> {
     const username = req.params.username || null;
 
     if (!username) {
@@ -133,9 +151,17 @@ export default class UsersController {
       const user = await (
         await dbClient.usersCollection()
       ).findOne({ username });
-      res.status(200).json(user);
+      if (user) {
+        res.status(200).json({ message: "User fetched", data: user });
+      } else {
+        res.status(404).json({ message: "User not found" });
+      }
     } catch (err) {
       res.status(500).json({ error: "An error occurred" });
     }
+  }
+
+  static async logoutUser(req: Request, res: Response): Promise<void> {
+    const username = req.params.username || null;
   }
 }

@@ -44,21 +44,27 @@ export default class Scraper {
           await superMartPage.keyboard.press("Enter");
           await superMartPage.waitForNavigation({ waitUntil: "networkidle2" });
 
+          const superMartSearchItems = await superMartPage.evaluate(() =>
+            Array.from(
+              document.querySelectorAll(".product-block .product-block__inner"),
+              (e: any) => ({
+                title: e?.querySelector(".product-block__title-price .title")
+                  ?.innerText,
+                link: e?.querySelector(".product-block__title-price .title")
+                  ?.href,
+                price: e?.querySelector(
+                  ".product-block__title-price .price span"
+                ).innerText,
+                image: e
+                  ?.querySelector(".image--shape-1 .rimage__image")
+                  .getAttribute("src"),
+              })
+            )
+          );
 
-
-          const superMartSearchItems = await superMartPage.evaluate(() => 
-            Array.from(document.querySelectorAll('.product-block .product-block__inner'), (e: any) => ({
-              title: e?.querySelector('.product-block__title-price .title')?.innerText,
-              link: e?.querySelector('.product-block__title-price .title')?.href,
-              price: e?.querySelector('.product-block__title-price .price span').innerText,
-              image: e?.querySelector('.image--shape-1 .rimage__image').getAttribute('src'),
-            })
-          
-          ));
-          console.log(superMartSearchItems);
 
           return superMartSearchItems;
-        }
+        };
 
         const pricePallySearch = async () => {
           pricePallyPage.on("dialog", async (dialog) => {
@@ -86,45 +92,34 @@ export default class Scraper {
           await pricePallyPage.keyboard.press("Enter");
           await pricePallyPage.waitForNavigation({ waitUntil: "networkidle2" });
 
-          // // handle results, add to array and store in databse
-          // const pricePallySearchItems = await pricePallyPage.evaluate(() => 
-
-          //   Array.from(document.querySelectorAll('.w-full.rounded-t.overflow-hidden'), (e: any) => ({
-          //     title: e?.querySelector('.lg:fs-700.text-[#333333].fs-500.fw-500.text-ellipsis.overflow-hidden.whitespace-nowrap')?.innerText,
-          //     link: e?.querySelector('a')?.href,
-          //     price: e?.querySelector('.fs-600.lg:text-lg.fw-600').innerText,
-          //     image: e?.querySelector('img').getAttribute('src'),
-          //   }))
-          // );
-
-          // handle results, add to array and store in database
-          const pricePallySearchItems = await pricePallyPage.evaluate(() => 
-            Array.from(document.querySelectorAll('.w-full.rounded-t.overflow-hidden'), (e: any) => ({
-              title: e?.querySelector('[class*="lg:fs-700"][class*="text-[#333333]"][class*="fs-500"][class*="fw-500"][class*="text-ellipsis"][class*="overflow-hidden"][class*="whitespace-nowrap"]')?.innerText,
-              link: e?.querySelector('a')?.href,
-              price: e?.querySelector('[class*="fs-600"][class*="lg:text-lg"][class*="fw-600"]')?.innerText,
-              image: e?.querySelector('img')?.getAttribute('src'),
-            }))
+          const pricePallySearchItems = await pricePallyPage.evaluate(() =>
+            Array.from(
+              document.querySelectorAll(".w-full.rounded-t.overflow-hidden"),
+              (e: any) => ({
+                title: e
+                  .querySelector(
+                    ".lg\\:fs-700.text-\\[\\#333333\\].fs-500.fw-500.text-ellipsis.overflow-hidden.whitespace-nowrap"
+                  )
+                  ?.innerText.trim(),
+                link: e.querySelector("a")?.href.trim(),
+                price: e
+                  .querySelector(".fs-600.lg\\:text-lg.fw-600")
+                  ?.innerText.trim(),
+                image: e.querySelector("img")?.getAttribute("src").trim(),
+              })
+            )
           );
-
-          
-          console.log(pricePallySearchItems);
 
           return pricePallySearchItems;
         };
-          
 
         const [superMartSearchResults, pricePallySearchResults] =
           await Promise.all([superMartSearch(), pricePallySearch()]);
-
-        console.log("SuperMart Search Results:", superMartSearchResults);
-        console.log("PricePally Search Results:", pricePallySearchResults);
 
         return {
           superMart: superMartSearchResults,
           pricePally: pricePallySearchResults,
         };
-
       } catch (error) {
         console.error("Error during search:", error);
       } finally {

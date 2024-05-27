@@ -11,6 +11,12 @@ router.post('/api/create_user', UsersController.createUser);
 // POST /login => UserController.createUser
 router.post('/api/login', UsersController.loginUser);
 
+// GET /users => AppController.getStatus
+router.get('/api/users', UsersController.getUsers);
+
+// GET /user/:username => UserController.getUser
+router.get('/api/user/:username', UsersController.getUser);
+
 // GET /search results => AppController.getStatus
 router.get('/api/search', AppController.getSearchResults);
 

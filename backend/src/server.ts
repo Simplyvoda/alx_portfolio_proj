@@ -14,10 +14,16 @@ app.use(bodyParser.json());
 // app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.use(session());
+app.use(session({
+  secret: 'secret-key',
+  resave: false,
+  saveUninitialized: true,
+}));
 
 // load all routes from routes/index.js
 app.use(routes);
+
+// do jwt authentication here
 
 async function startServer() {
   // connect to database and log port
