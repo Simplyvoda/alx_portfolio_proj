@@ -219,7 +219,7 @@ export const response = {
           "image": "//www.supermart.ng/cdn/shop/files/drmv914_220x@2x.jpg?v=1689136134"
         }
       ],
-      "pricePally": [
+      "ngMart": [
         {
           "title": "Titus Fish - Half Of Carton (Local Market) - 10kg",
           "link": "https://247foods.ng/product/details/titus-fish-one-third-of-carton-local-market-1158",

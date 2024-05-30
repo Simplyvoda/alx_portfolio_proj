@@ -27,4 +27,5 @@ export interface IProduct {
   link: string;
   price: string;
   image: string;
+  source: string;
 }

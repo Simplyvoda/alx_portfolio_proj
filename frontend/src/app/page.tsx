@@ -45,23 +45,6 @@ const HomePage = () => {
             </div>
           </div>
           <div className="absolute top-[37.94rem] left-[23.06rem] w-[43.81rem] h-[21.04rem] text-[1rem] font-gilroy-medium">
-            {/* <img
-              className="absolute top-[0.64rem] left-[4.34rem] w-[15.36rem] h-[16.08rem]"
-              alt=""
-              src={Blob}
-            /> */}
-            {/* <div className="absolute top-[1.5rem] left-[calc(50%_-_153.5px)] rounded-3xl bg-gray-200 [backdrop-filter:blur(212px)] flex flex-col py-[2.5rem] px-[3.75rem] items-start justify-center gap-[1rem] border-[0.5px] border-solid border-primary-400">
-              <div className="flex items-center justify-center item-center w-[100%]">
-         
-              </div>
-              <div className="self-stretch relative leading-[1.5rem]">
-                <span>Seamlessly transform your long URLs into </span>
-                <span className="font-gilroy-semibold">concise </span>
-                <span>and </span>
-                <span className="font-gilroy-semibold">shareable links </span>
-                <span> with just few clicks.</span>
-              </div>
-            </div> */}
           </div>
         </div>
         <div className="absolute h-[63.81%] w-[37.71%] top-[36.19%] right-[0%] bottom-[0%] left-[62.29%] max-w-full overflow-hidden max-h-full opacity-[0.7]">

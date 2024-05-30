@@ -25,10 +25,22 @@ const Home = () => {
         }
     }
 
-    useEffect(()=> {
+    useEffect(() => {
       const searchData = response.data;
-      setSearchResult([...searchData.pricePally, ...searchData.superMart])
-    },[])
+  
+      const ngMartResults = searchData.ngMart.map(item => ({
+        ...item,
+        source: '247foods NG'
+      }));
+  
+      const superMartResults = searchData.superMart.map(item => ({
+        ...item,
+        source: 'Super Mart',
+        image: item.image.startsWith('https:') ? item.image : `https:${item.image}`
+      }));
+  
+      setSearchResult([...ngMartResults, ...superMartResults]);
+    }, []);
 
 
     useEffect(()=> {
