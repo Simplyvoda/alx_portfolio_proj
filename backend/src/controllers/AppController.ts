@@ -13,7 +13,7 @@ export default class AppController {
       );
       res
         .status(200)
-        .json({
+        .send({
           message: "Search results fetched successfully",
           data: search_results,
         });

@@ -60,10 +60,8 @@ const SignInPage = () => {
       try {
         const res = await axios.post(`${BASE_API_URL}/login`, loginData);
 
-        if (res.status === 201) {
-          toast.success("Sign In successful", {
-            position: toast?.POSITION.BOTTOM_CENTER,
-          });
+        if (res.status === 200) {
+          toast.success("Sign In successful");
 
           console.log("Login data", res.data);
           const user = res.data;
@@ -71,11 +69,8 @@ const SignInPage = () => {
           // push user to search page
           router.push('/home');
 
-          router.push("/support/tickets");
         } else {
-          toast.error("Invalid email or password", {
-            position: toast.POSITION.BOTTOM_CENTER,
-          });
+          toast.error("Invalid email or password");
         }
       } catch (e: any) {
         toast.error(
@@ -83,10 +78,7 @@ const SignInPage = () => {
             e?.response.data?.message
               ? e?.response.data?.message
               : "Something went wrong try again later!"
-          }`,
-          {
-            position: toast.POSITION.BOTTOM_CENTER,
-          }
+          }`
         );
       } finally {
         setIsloading(false);

@@ -5,31 +5,38 @@ export default class Scraper {
     let browser;
     try {
       browser = await puppeteer.launch({
-        headless: true,
-        args: ["--disable-notifications"],
+        headless: false,
+        args: [
+          "--no-sandbox",
+          "--disable-notifications",
+          "--disable-geolocation",
+        ],
       });
 
-      const [superMartPage, pricePallyPage] = await Promise.all([
+      const [superMartPage, ngMartPage] = await Promise.all([
         browser.newPage(),
         browser.newPage(),
       ]);
 
-      const [superMartResponse, pricePallyResponse] = await Promise.all([
+      superMartPage.setDefaultTimeout(60000); // 60 seconds for superMartPage
+      ngMartPage.setDefaultTimeout(60000); // 60 seconds for ngMartPage
+
+      const [superMartResponse, ngMartResponse] = await Promise.all([
         superMartPage.goto("https://www.supermart.ng/", {
-          waitUntil: "domcontentloaded",
+          waitUntil: "networkidle2",
         }),
-        pricePallyPage.goto("https://www.pricepally.com/", {
-          waitUntil: "domcontentloaded",
+        ngMartPage.goto("https://247foods.ng/", {
+          waitUntil: "networkidle2",
         }),
       ]);
 
-      if (!superMartResponse || !pricePallyResponse) {
+      if (!superMartResponse || !ngMartResponse) {
         throw new Error("One of the responses is undefined");
       }
 
       if (
         superMartResponse.status() !== 200 ||
-        pricePallyResponse.status() !== 200
+        ngMartResponse.status() !== 200
       ) {
         throw new Error("Failed to load one of the pages");
       }
@@ -39,7 +46,9 @@ export default class Scraper {
           superMartPage.on("dialog", async (dialog) => {
             await dialog.dismiss(); // Dismiss any dialogs that appear
           });
+
           const searchInputSelector = ".main-search__input";
+          await superMartPage.waitForSelector(searchInputSelector);
           await superMartPage.type(searchInputSelector, searchTerm); // Adjust the selector for SuperMart's search input
           await superMartPage.keyboard.press("Enter");
           await superMartPage.waitForNavigation({ waitUntil: "networkidle2" });
@@ -62,63 +71,64 @@ export default class Scraper {
             )
           );
 
-
           return superMartSearchItems;
         };
 
-        const pricePallySearch = async () => {
-          pricePallyPage.on("dialog", async (dialog) => {
+        const ngMartSearch = async () => {
+          ngMartPage.on("dialog", async (dialog) => {
+            await dialog.dismiss(); // Dismiss any dialogs that appear
+          });
+          // Set geolocation to Lagos, Nigeria (Latitude: 6.5244, Longitude: 3.3792)
+          await ngMartPage.setGeolocation({
+            latitude: 6.5244,
+            longitude: 3.3792,
+          });
+          const searchInputSelector = "#srch_term";
+          await ngMartPage.waitForSelector(searchInputSelector);
+          await ngMartPage.type(searchInputSelector, searchTerm); // Adjust the selector for ngMart's search input
+          await ngMartPage.keyboard.press("Enter");
+
+          ngMartPage.on("dialog", async (dialog) => {
             await dialog.dismiss(); // Dismiss any dialogs that appear
           });
 
-          // confirm city to be lagos -- subsequently ask user for location when loading the application
+          await ngMartPage.waitForNavigation({ waitUntil: "networkidle2" });
 
-          // Select the radio button using the type, name, and class attributes
-          const radioSelector = 'input[type="radio"][name="Lagos"].w-4';
-          await pricePallyPage.waitForSelector(radioSelector);
-
-          // Click the radio button
-          await pricePallyPage.click(radioSelector);
-
-          // Select the button using the class attributes
-          const buttonSelector = ".btn-primary.fw-800.w-full.py-2";
-          await pricePallyPage.waitForSelector(buttonSelector);
-
-          const confirmButton = await pricePallyPage.$(buttonSelector);
-          await confirmButton?.click();
-          const searchInputSelector = 'input[placeholder="Search food items"]';
-
-          await pricePallyPage.type(searchInputSelector, searchTerm); // Adjust the selector for PricePally's search input
-          await pricePallyPage.keyboard.press("Enter");
-          await pricePallyPage.waitForNavigation({ waitUntil: "networkidle2" });
-
-          const pricePallySearchItems = await pricePallyPage.evaluate(() =>
+          const ngMartSearchItems = await ngMartPage.evaluate(() =>
             Array.from(
-              document.querySelectorAll(".w-full.rounded-t.overflow-hidden"),
+              document.querySelectorAll(
+                ".product-layout .product-item-container"
+              ),
               (e: any) => ({
                 title: e
+                  .querySelector(".right-block .caption h4")
+                  ?.innerText.trim(),
+                link: e
+                  .querySelector(".right-block .caption h4 a")
+                  ?.href.trim(),
+                price: e
                   .querySelector(
-                    ".lg\\:fs-700.text-\\[\\#333333\\].fs-500.fw-500.text-ellipsis.overflow-hidden.whitespace-nowrap"
+                    ".right-block .caption .total-price .price .price-new"
                   )
                   ?.innerText.trim(),
-                link: e.querySelector("a")?.href.trim(),
-                price: e
-                  .querySelector(".fs-600.lg\\:text-lg.fw-600")
-                  ?.innerText.trim(),
-                image: e.querySelector("img")?.getAttribute("src").trim(),
+                image: e
+                  .querySelector(".left-block .product-image-container a img")
+                  ?.getAttribute("src")
+                  .trim(),
               })
             )
           );
 
-          return pricePallySearchItems;
+          return ngMartSearchItems;
         };
 
-        const [superMartSearchResults, pricePallySearchResults] =
-          await Promise.all([superMartSearch(), pricePallySearch()]);
+        const [superMartSearchResults, ngMartSearchResults] = await Promise.all(
+          [superMartSearch(), ngMartSearch()]
+        );
 
         return {
           superMart: superMartSearchResults,
-          pricePally: pricePallySearchResults,
+          ngMart: ngMartSearchResults,
         };
       } catch (error) {
         console.error("Error during search:", error);

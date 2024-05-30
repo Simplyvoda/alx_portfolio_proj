@@ -17,7 +17,7 @@ router.get('/api/users', UsersController.getUsers);
 // GET /user/:username => UserController.getUser
 router.get('/api/user/:username', UsersController.getUser);
 
-// GET /search results => AppController.getStatus
+// GET /search results => AppController.getSearchResults
 router.get('/api/search', AppController.getSearchResults);
 
 

@@ -4,6 +4,7 @@ import "./globals.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
+import ToastProvider from "@/components/providers/ToastProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AntdRegistry>{children}<ToastContainer/></AntdRegistry>
+        <AntdRegistry><ToastProvider>{children}</ToastProvider></AntdRegistry>
       </body>
     </html>
   );
