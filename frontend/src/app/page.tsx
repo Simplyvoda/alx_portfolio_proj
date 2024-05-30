@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "react-toastify";
 import Navbar from "@/components/Navbar";
+import HomeNavbar from "@/components/HomeNavbar";
 // import { BASE_API_URL } from "../../utils/config";
 // this should be changed to be for client sign in
 
@@ -13,7 +14,7 @@ const HomePage = () => {
   return (
     <>
       <div className="heroContainer">
-        <Navbar />
+        <HomeNavbar />
         <div className="relative bg-neutral-white w-[100%] h-[60rem] text-center text-[3rem]">
           <div className="absolute top-[10.13rem] left-[calc(50%_-_474px)] flex flex-col items-center justify-start gap-[2rem]">
             <div className="flex flex-col items-center justify-start gap-[0.5rem]">

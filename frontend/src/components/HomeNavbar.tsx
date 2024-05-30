@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Avatar, Space } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 
-const Navbar = () => {
+const HomeNavbar = () => {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
 
@@ -22,8 +22,7 @@ const Navbar = () => {
     if (local_user) {
       setUser(JSON.parse(local_user));
     }
-
-  }, [])
+  }, []);
 
   return (
     <>
@@ -37,17 +36,18 @@ const Navbar = () => {
           </h1>
         </div>
 
-
-        <div className="flex items-center gap-2 h-auto">
-          <Avatar size={50} shape="square" icon={<UserOutlined />}></Avatar>
-          <div className="text-sm flex flex-col h-full items-start">
-            <p>@{user?.username}</p>
-            <p className="text-xs">Shopper</p>
-          </div>
+        <div className="flex flex-row items-center justify-start gap-[1.5rem] text-[1rem] font-gilroy-semibold cursor-pointer">
+          <p onClick={() => router.push("/login")}>Log in</p>
+          <button
+            onClick={() => router.push("/signup")}
+            className="rounded-81xl bg-primary-300-base w-[8.88rem] h-[2.75rem] flex flex-row py-[0.75rem] px-[1.5rem] box-border items-center justify-center gap-[0.63rem] text-neutral-white outline-none hover:opacity-[90%]"
+          >
+            <p className="leading-[0.75rem]">Try for free</p>
+          </button>
         </div>
       </nav>
     </>
   );
 };
 
-export default Navbar;
+export default HomeNavbar;

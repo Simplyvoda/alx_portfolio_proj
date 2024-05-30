@@ -63,8 +63,10 @@ const SignInPage = () => {
         if (res.status === 200) {
           toast.success("Sign In successful");
 
-          console.log("Login data", res.data);
-          const user = res.data;
+          console.log("Login data", res.data.data);
+          const user = res.data.data;
+
+          localStorage.setItem("user", JSON.stringify(user));
 
           // push user to search page
           router.push('/home');
