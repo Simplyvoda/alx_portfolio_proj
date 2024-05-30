@@ -1,18 +1,25 @@
 "use client";
 import React, { useState } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "react-toastify";
-// import { BASE_API_URL } from "../../utils/config";
-// this should be changed to be for client sign in
+import { BASE_API_URL } from "../../utils/config";
+import axios from "axios";
+
+interface ISignUp {
+    email: string;
+    username: string;
+    password: string;
+  }
 
 const SignUpPage = () => {
-  const [signUpData, setSignUpData] = useState({
+    const router = useRouter();
+  const [signUpData, setSignUpData] = useState<ISignUp>({
     email: "",
     username: "",
     password: "",
   });
-  const [formErrors, setFormErrors] = useState({
+  const [formErrors, setFormErrors] = useState<ISignUp>({
     email: "",
     username: "",
     password: "",
@@ -30,7 +37,7 @@ const SignUpPage = () => {
 
   const validateForm = () => {
     let isValid = true;
-    const errors = {};
+    const errors:ISignUp = {email: "", username: "", password: ""};
 
     // Validation logic for each field
     if (!signUpData.email) {
@@ -101,7 +108,7 @@ const SignUpPage = () => {
         <div className="relative w-[100%] h-[100%]">
           <Image
             alt=""
-            src="/images/client_signup_picture.png"
+            src="/images/logo.png"
             layout="fill"
             objectFit="contain"
             className="rounded-[10px]"
@@ -111,17 +118,19 @@ const SignUpPage = () => {
       <div className="w-[50%] h-[100%] ">
         <div className="flex flex-col min-h-[498px] min-w-[440px] items-center">
           <div className="w-[100%] h-[100%] flex flex-col  items-center mt-6">
-            <div className="relative w-[212px] h-[64px] ">
-              <Image
-                alt=""
-                src="/images/bluechip_logo.svg"
-                layout="fill"
-                objectFit="cover"
-              />
+          <div className="flex flex-row items-center w-auto mt-14">
+              <div className="relative w-[100px] h-[64px] ">
+                <Image
+                  alt=""
+                  src="/images/logo.png"
+                  layout="fill"
+                  objectFit="contain"
+                />
+              </div>
+              <h2 className="relative font-semibold text-[#333333] text-[32px] font-[Inter]">
+                Price Falcon
+              </h2>
             </div>
-            <h2 className="relative font-semibold mt-10 text-[#333333] text-[28px] font-[Inter]">
-              Price Falcon
-            </h2>
             <form className="w-[440px] flex flex-col gap-[24px] mt-[36px]">
               <div className="flex flex-col gap-[6px] w-full">
                 <label className="text-[#6C7480] font-[Inter] font-medium text-[14px]">
@@ -180,6 +189,15 @@ const SignUpPage = () => {
                 Sign Up
               </button>
             </div>
+            <p className="text-center text-black mt-6">
+                Already have an Account?{" "}
+                <span
+                  className="text-[#3772D4] cursor-pointer"
+                  onClick={() => router.push("/login")}
+                >
+                  Sign In
+                </span>
+              </p>
           </div>
         </div>
       </div>

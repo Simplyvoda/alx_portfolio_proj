@@ -21,9 +21,8 @@ const port = process.env.PORT || 4001;
 
 // Use middleware
 app.use(bodyParser.json());
-// app.use(cookieParser());
-// Use CORS middleware
 app.use(cors(corsOptions));
+// app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
