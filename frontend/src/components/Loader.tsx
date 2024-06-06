@@ -2,7 +2,7 @@
 import React from "react";
 import { Oval } from "react-loader-spinner";
 
-const Loader = () => {
+const Loader = ({ text }: { text?: string }) => {
   return (
     <div className="w-full h-full flex flex-col gap-4 justify-center items-center">
       <Oval
@@ -15,8 +15,9 @@ const Loader = () => {
         wrapperStyle={{}}
         wrapperClass=""
       />
-      <p className="text-grey">Searching sites ... this may take a while</p>
-
+      <p className="text-grey">
+        {text ? text : "Searching sites ... this may take a while"}
+      </p>
     </div>
   );
 };

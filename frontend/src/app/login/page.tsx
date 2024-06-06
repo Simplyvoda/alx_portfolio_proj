@@ -69,19 +69,12 @@ const SignInPage = () => {
           localStorage.setItem("token", user.token);
 
           // push user to search page
-          router.push('/home');
-
+          router.push("/home");
         } else {
           toast.error("Invalid email or password");
         }
       } catch (e: any) {
-        toast.error(
-          `${
-            e?.response.data?.message
-              ? e?.response.data?.message
-              : "Something went wrong try again later!"
-          }`
-        );
+        toast.error("Something went wrong try again later!");
       } finally {
         setIsloading(false);
         setLoginData({

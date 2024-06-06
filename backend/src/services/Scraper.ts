@@ -4,7 +4,6 @@ import { config } from 'dotenv';
 config();
 
 
-
 export default class Scraper {
   static async search(searchTerm: string) {
     let browser;

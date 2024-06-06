@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Avatar, Space, Tooltip } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { FiLogOut } from "react-icons/fi";
+import { FcLike } from "react-icons/fc";
 import { toast } from "react-toastify";
 
 const Navbar = () => {
@@ -24,12 +25,12 @@ const Navbar = () => {
     router.push("/");
     toast.success("User logged out");
     setUser(null);
-  }
+  };
 
   return (
     <>
       <nav className="flex flex-row items-center justify-between w-[80%] pt-[1rem] mx-auto gap-[8.75rem] text-[1.5rem] text-primary-300-base">
-        <div className="flex flex-row p-[0.5rem] items-center justify-start gap-[0.5rem]">
+        <div className="flex flex-row p-[0.5rem] items-center justify-start gap-[0.5rem] cursor-pointer" onClick={() => router.push('/home')}>
           <div className="relative w-[120px] h-[90px]">
             <Image src="/images/logo.png" alt="" layout="fill" />
           </div>
@@ -46,8 +47,14 @@ const Navbar = () => {
               <p className="text-xs">Shopper</p>
             </div>
           </div>
+          <Tooltip title="view saved items">
+            <FcLike
+              onClick={() => router.push("/saved_items")}
+              className="cursor-pointer text-[2.4rem]"
+            />
+          </Tooltip>
           <Tooltip title="logout">
-          <FiLogOut onClick={logoutUser} className="cursor-pointer" />
+            <FiLogOut onClick={logoutUser} className="cursor-pointer" />
           </Tooltip>
         </div>
       </nav>

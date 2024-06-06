@@ -10,9 +10,14 @@ const app = express();
 
 const port = process.env.PORT || 4001;
 
+// Configure CORS to allow all origins
+app.use(cors({
+  origin: '*',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true, // Allow cookies to be sent
+}));
 // Use middleware
 app.use(bodyParser.json());
-app.use(cors());
 app.use(passport.initialize());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

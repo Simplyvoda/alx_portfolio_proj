@@ -30,6 +30,6 @@ router.post('/api/save_item', passport.authenticate('jwt', { session: false }), 
 // GET /saved_item => AppController.getSavedItems with Passport.js authentication
 router.get('/api/saved_items', passport.authenticate('jwt', { session: false }), AppController.getSavedItems);
 
-// DELETE /itemS => AppController.removeSavedItem with Passport.js authentication
+// DELETE /items => AppController.removeSavedItem with Passport.js authentication
 router.delete('/api/saved_item/:id', passport.authenticate('jwt', { session: false }), AppController.removeSavedItem);
 export default router;

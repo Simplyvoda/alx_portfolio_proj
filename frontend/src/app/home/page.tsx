@@ -8,48 +8,66 @@ import response from "@/utils/data";
 import { IProduct, NgMart, SuperMart } from "@/interface/product-model";
 import Image from "next/image";
 import Loader from "@/components/Loader";
-import instance from "../../../services/axios";
+import { toast } from "react-toastify";
+
 
 const Home = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResult, setSearchResult] = useState<any>([]);
   const [isloading, setIsloading] = useState<boolean>(false);
   const [user, setUser] = useState<any>(null);
+  const [token, setToken] = useState<any>();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setToken(token);
+  },[])
+
+  const instance = axios.create({
+    baseURL: BASE_API_URL,
+    headers: {
+      'Accept': '*/*',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
 
   const handleSearch = async () => {
-    try {
-      setIsloading(true);
-      const res = await instance.get(`/search?value=${searchTerm}`);
-
-      console.log(res.data.data);
-
-      const searchData = res.data.data;
-
-      const ngMartResults = searchData.ngMart.map((item: NgMart) => ({
-        ...item,
-        source: "247foods NG",
-      }));
-
-      const superMartResults = searchData.superMart.map((item: SuperMart) => ({
-        ...item,
-        source: "Super Mart",
-        image: item.image.startsWith("https:")
-          ? item.image
-          : `https:${item.image}`,
-      }));
-
-      setSearchResult([...ngMartResults, ...superMartResults]);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setSearchTerm("");
-      setIsloading(false);
+    if(searchTerm !== ""){
+      try {
+        setIsloading(true);
+        const res = await instance.get(`/search?value=${searchTerm}`);
+  
+  
+        const searchData = res.data.data;
+  
+        const ngMartResults = searchData.ngMart.map((item: NgMart) => ({
+          ...item,
+          source: "247foods NG",
+        }));
+  
+        const superMartResults = searchData.superMart.map((item: SuperMart) => ({
+          ...item,
+          source: "Super Mart",
+          image: item.image.startsWith("https:")
+            ? item.image
+            : `https:${item.image}`,
+        }));
+  
+        setSearchResult([...ngMartResults, ...superMartResults]);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setSearchTerm("");
+        setIsloading(false);
+      }
+    }else{
+      toast.error("Please enter a product before searching");
     }
   };
 
   useEffect(() => {
-    console.log(searchResult, "result to use");
-  }, [searchResult]);
+    console.log(searchTerm, "search term");
+  }, [searchTerm]);
 
   useEffect(() => {
     const local_user = localStorage.getItem("user");
@@ -57,6 +75,8 @@ const Home = () => {
       setUser(JSON.parse(local_user));
     }
   }, []);
+
+
 
   return (
     <>
@@ -116,7 +136,7 @@ const Home = () => {
           isloading ? <div className="flex w-full h-[50vh] items-center flex-col"><Loader/></div> : (
             <div className="grid p-8 grid-cols-4 gap-8">
               {searchResult?.map((each: IProduct, index: number) => {
-                return <ProductCard product={each} key={index} />;
+                return <ProductCard product={each} key={index}  />;
               })}
             </div>
           )

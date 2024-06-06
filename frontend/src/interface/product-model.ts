@@ -28,4 +28,5 @@ export interface IProduct {
   price: string;
   image: string;
   source: string;
+  store?: string;
 }
