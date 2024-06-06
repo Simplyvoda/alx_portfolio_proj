@@ -1,10 +1,26 @@
 import { IProduct } from "@/interface/product-model";
-import React from "react";
+import React, {useEffect, useState } from "react";
 import Image from "next/image";
-import instance from "../../services/axios";
+// import instance from "../../services/axios";
+import { BASE_API_URL } from "@/utils/config";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 const ProductCard = ({ product }: { product: IProduct }) => {
+  const [token, setToken] = useState<any>();
+  
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setToken(token);
+  }, []);
+
+  const instance = axios.create({
+    baseURL: BASE_API_URL,
+    headers: {
+      Accept: "*/*",
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   const handleSaveItem = async (each: any) => {
     console.log(each)
