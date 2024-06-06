@@ -7,7 +7,8 @@
     "start": "npx tsx src/server.ts",
     "start-db": "npx tsx src/server.ts",
     "build": "tsc",
-    "postinstall": "npx puppeteer install"
+    "postinstall": "npx puppeteer install",
+    "heroku-postbuild": "mkdir ./.cache && mv /app/.cache/puppeteer ./.cache"
   },
   "author": "efem.vodina@gmail.com",
   "license": "ISC",

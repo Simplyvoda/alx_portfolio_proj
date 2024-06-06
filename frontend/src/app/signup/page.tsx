@@ -6,13 +6,13 @@ import { toast } from "react-toastify";
 import instance from "../../../services/axios";
 
 interface ISignUp {
-    email: string;
-    username: string;
-    password: string;
-  }
+  email: string;
+  username: string;
+  password: string;
+}
 
 const SignUpPage = () => {
-    const router = useRouter();
+  const router = useRouter();
   const [signUpData, setSignUpData] = useState<ISignUp>({
     email: "",
     username: "",
@@ -25,7 +25,7 @@ const SignUpPage = () => {
   });
   const [isloading, setIsloading] = useState(false);
 
-  const handleLoginFormChange = (e) => {
+  const handleLoginFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const { name, value } = e.target;
     setSignUpData({
@@ -36,7 +36,7 @@ const SignUpPage = () => {
 
   const validateForm = () => {
     let isValid = true;
-    const errors:ISignUp = {email: "", username: "", password: ""};
+    const errors: ISignUp = { email: "", username: "", password: "" };
 
     // Validation logic for each field
     if (!signUpData.email) {
@@ -69,27 +69,14 @@ const SignUpPage = () => {
         const res = await instance.post(`/create_user`, signUpData);
 
         if (res.status === 201) {
-          toast.success("Sign In successful", {
-            position: toast.POSITION.BOTTOM_CENTER,
-          });
+          toast.success("Sign In successful");
 
           router.push("/login");
         } else {
-          toast.error("Invalid email or password", {
-            position: toast.POSITION.BOTTOM_CENTER,
-          });
+          toast.error("Invalid email or password");
         }
-      } catch (e) {
-        toast.error(
-          `${
-            e?.response.data?.message
-              ? e?.response.data?.message
-              : "Something went wrong try again later!"
-          }`,
-          {
-            position: toast.POSITION.BOTTOM_CENTER,
-          }
-        );
+      } catch (e: any) {
+        toast.error("Something went wrong try again later!");
       } finally {
         setIsloading(false);
         setSignUpData({
@@ -117,7 +104,7 @@ const SignUpPage = () => {
       <div className="w-[50%] h-[100%] ">
         <div className="flex flex-col min-h-[498px] min-w-[440px] items-center">
           <div className="w-[100%] h-[100%] flex flex-col  items-center mt-6">
-          <div className="flex flex-row items-center w-auto mt-14">
+            <div className="flex flex-row items-center w-auto mt-14">
               <div className="relative w-[100px] h-[64px] ">
                 <Image
                   alt=""
@@ -189,14 +176,14 @@ const SignUpPage = () => {
               </button>
             </div>
             <p className="text-center text-black mt-6">
-                Already have an Account?{" "}
-                <span
-                  className="text-[#3772D4] cursor-pointer"
-                  onClick={() => router.push("/login")}
-                >
-                  Sign In
-                </span>
-              </p>
+              Already have an Account?{" "}
+              <span
+                className="text-[#3772D4] cursor-pointer"
+                onClick={() => router.push("/login")}
+              >
+                Sign In
+              </span>
+            </p>
           </div>
         </div>
       </div>
