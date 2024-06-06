@@ -1,4 +1,4 @@
-import puppeteer from "puppeteer";
+import puppeteer, { executablePath } from "puppeteer";
 
 export default class Scraper {
   static async search(searchTerm: string) {
@@ -6,10 +6,18 @@ export default class Scraper {
     try {
       browser = await puppeteer.launch({
         headless: true,
+        executablePath: process.env.CHROME_BIN,
         args: [
           "--no-sandbox",
           "--disable-notifications",
           "--disable-geolocation",
+          "--disable-setuid-sandbox",
+          "--disable-dev-shm-usage",
+          "--disable-accelerated-2d-canvas",
+          "--no-first-run",
+          "--no-zygote",
+          "--single-process",
+          "--disable-gpu",
         ],
       });
 
@@ -18,8 +26,10 @@ export default class Scraper {
         browser.newPage(),
       ]);
 
-      superMartPage.setDefaultTimeout(60000); // 60 seconds for superMartPage
-      ngMartPage.setDefaultTimeout(60000); // 60 seconds for ngMartPage
+      console.log("Browser initialization");
+
+      superMartPage.setDefaultTimeout(60000); 
+      ngMartPage.setDefaultTimeout(60000);
 
       const [superMartResponse, ngMartResponse] = await Promise.all([
         superMartPage.goto("https://www.supermart.ng/", {
@@ -73,7 +83,7 @@ export default class Scraper {
 
           return superMartSearchItems;
         };
-
+        console.log("Supermart Search");
         const ngMartSearch = async () => {
           ngMartPage.on("dialog", async (dialog) => {
             await dialog.dismiss(); // Dismiss any dialogs that appear
@@ -121,6 +131,7 @@ export default class Scraper {
 
           return ngMartSearchItems;
         };
+        console.log("NGmart Search");
 
         const [superMartSearchResults, ngMartSearchResults] = await Promise.all(
           [superMartSearch(), ngMartSearch()]

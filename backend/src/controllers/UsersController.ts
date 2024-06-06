@@ -2,6 +2,22 @@ import sha1 from "sha1";
 import { dbClient } from "../../utils/db";
 import { ObjectId } from "mongodb";
 import { Request, Response } from "express";
+import User from "../../models/User";
+import bcrypt from "bcryptjs";
+import generateToken from "../../utils/auth";
+
+interface IUser {
+  email: string;
+  password: string;
+  username: string;
+  createdAt: Date;
+  updatedAt: Date;
+  _id: ObjectId
+}
+
+interface AuthenticatedRequest extends Request {
+  user?: IUser;
+}
 
 export default class UsersController {
   /**
@@ -10,56 +26,47 @@ export default class UsersController {
    * @param {Response} res - The response object.
    * @returns {void}
    */
-  static async createUser(req: Request, res: Response): Promise<void> {
+
+  static async createUser(req: Request, res: Response) {
     // Get email, password, and username from request body
-    const email = req.body ? req.body.email : null;
-    const password = req.body ? req.body.password : null;
-    const username = req.body ? req.body.username : null;
+    const { username, email, password } = req.body;
 
-    // include code to validate username and password and email address
-
-    // Check if the user already exists
-    const existingUser = await (
-      await dbClient.usersCollection()
-    ).findOne({ username });
-
-    if (existingUser) {
-      res.status(400).json({
-        error: "User already exists",
-      });
+    // Basic validation
+    if (!email || !password || !username) {
+      res
+        .status(400)
+        .json({ error: "Email, username, and password are required" });
       return;
-    } else {
-      const hashedPassword = sha1(password);
-      const newUser = {
-        email: email,
-        password: hashedPassword,
-        username: username,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+    }
 
-      // adding user to database
-      const result = await (
-        await dbClient.usersCollection()
-      ).insertOne(newUser);
-      const generatedId = result.insertedId.toString();
+    try {
+      const existingUser = await User.findOne({ username });
+      if (existingUser) {
+        return res.status(400).json({ message: "User already exists" });
+      }
 
-      // initiate job to send user welcom email
-      // if (generatedId) {
-      //     const jobData = { userId: generatedId };
-      //     await userQueue.add(jobData);
-      // }
+      const newUser = new User({ username, email, password });
+      await newUser.save();
+
+      const token = generateToken(newUser);
 
       res.status(201).json({
         message: "User created successfully",
         data: {
-          id: generatedId,
+          id: newUser._id,
           email: newUser.email,
           username: newUser.username,
           createdAt: newUser.createdAt,
           updatedAt: newUser.updatedAt,
+          token: token
         },
       });
+
+      // initiate job to send welcome email after successful sign up
+    } catch (err: any) {
+      res
+        .status(500)
+        .json({ error: "An error occurred while creating the user" });
     }
   }
 
@@ -69,44 +76,37 @@ export default class UsersController {
    * @param {Response} res - The response object.
    * @returns {void}
    */
-  static async loginUser(req: Request, res: Response): Promise<void> {
-    const username = req.body ? req.body.username : null;
-    const password = req.body ? req.body.password : null;
+  static async loginUser(req: AuthenticatedRequest, res: Response): Promise<void> {
+    const { username, password } = req.body;
 
     if (!username || !password) {
-      res.status(400).json({
-        error: "Username and password are required",
-      });
+      res.status(400).json({ error: "Username and password are required" });
       return;
     }
 
-    const user = await (await dbClient.usersCollection()).findOne({ username });
+    try {
+      const user = req.user; // Access the authenticated user from req.user
+      if (!user) {
+        res.status(400).json({ error: "User does not exist" });
+        return;
+      }
 
-    if (!user) {
-      res.status(400).json({
-        error: "User does not exist",
-      });
-      return;
-    }
+      const token = generateToken(user);
+      console.log("token", token);
 
-    const hashedPassword = sha1(password);
-
-    if (hashedPassword !== user.password) {
-      res.status(400).json({
-        error: "Incorrect password",
-      });
-      return;
-    } else {
       res.status(200).json({
         message: "User logged in successfully",
         data: {
-          id: user._id.toString(),
+          id: user._id,
           email: user.email,
           username: user.username,
           createdAt: user.createdAt,
           updatedAt: user.updatedAt,
+          token: token,
         },
       });
+    } catch (err) {
+      res.status(500).json({ error: "An error occurred during login" });
     }
   }
 
@@ -117,20 +117,19 @@ export default class UsersController {
    * @returns {void}
    */
   static async getUsers(req: Request, res: Response): Promise<void> {
-    const users = await (await dbClient.usersCollection()).find().toArray();
-    if (users) {
-      const all_users = users.map((user) => {
-        return {
-          id: user._id.toString(),
-          email: user.email,
-          username: user.username,
-          createdAt: user.createdAt,
-          updatedAt: user.updatedAt,
-        };
-      });
-      res.status(200).json({ message: "Users fetched", data: all_users });
-    } else {
-      res.status(500).json({ error: "An error occurred" });
+    try {
+      const users = await User.find();
+      const allUsers = users.map((user: IUser) => ({
+        id: user._id,
+        email: user.email,
+        username: user.username,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      }));
+
+      res.status(200).json({ message: "Users fetched", data: allUsers });
+    } catch (err) {
+      res.status(500).json({ error: "An error occurred while fetching users" });
     }
   }
 
@@ -141,27 +140,32 @@ export default class UsersController {
    * @returns {void}
    */
   static async getUser(req: Request, res: Response): Promise<void> {
-    const username = req.params.username || null;
+    const { username } = req.params;
 
     if (!username) {
-      throw new Error("Username is required");
+      res.status(400).json({ error: "Username is required" });
+      return;
     }
 
     try {
-      const user = await (
-        await dbClient.usersCollection()
-      ).findOne({ username });
+      const user = await User.findOne({ username });
       if (user) {
         res.status(200).json({ message: "User fetched", data: user });
       } else {
         res.status(404).json({ message: "User not found" });
       }
     } catch (err) {
-      res.status(500).json({ error: "An error occurred" });
+      res.status(500).json({ error: "An error occurred while fetching the user" });
     }
   }
 
+    /**
+   * Logouts out user.
+   * @param {Request} req - The request object.
+   * @param {Response} res - The response object.
+   * @returns {void}
+   */
   static async logoutUser(req: Request, res: Response): Promise<void> {
-    const username = req.params.username || null;
+    res.status(200).json({ message: "User logged out successfully" });
   }
 }
