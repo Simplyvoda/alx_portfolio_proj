@@ -9,11 +9,14 @@ import { IProduct, NgMart, SuperMart } from "@/interface/product-model";
 import Image from "next/image";
 import Loader from "@/components/Loader";
 import { toast } from "react-toastify";
-
+import { Dropdown, Button, Space } from "antd";
+import { DownOutlined } from "@ant-design/icons";
 
 const Home = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResult, setSearchResult] = useState<any>([]);
+  const [tempResults, setTempResults] = useState<any>([]);
+  const [criteria, setCriteria] = useState("");
   const [isloading, setIsloading] = useState<boolean>(false);
   const [user, setUser] = useState<any>(null);
   const [token, setToken] = useState<any>();
@@ -21,46 +24,48 @@ const Home = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     setToken(token);
-  },[])
+  }, []);
 
   const instance = axios.create({
     baseURL: BASE_API_URL,
     headers: {
-      'Accept': '*/*',
-      'Authorization': `Bearer ${token}`,
+      Accept: "*/*",
+      Authorization: `Bearer ${token}`,
     },
   });
 
   const handleSearch = async () => {
-    if(searchTerm !== ""){
+    if (searchTerm !== "") {
       try {
         setIsloading(true);
         const res = await instance.get(`/search?value=${searchTerm}`);
-  
-  
+
         const searchData = res.data.data;
-  
+
         const ngMartResults = searchData.ngMart.map((item: NgMart) => ({
           ...item,
           source: "247foods NG",
         }));
-  
-        const superMartResults = searchData.superMart.map((item: SuperMart) => ({
-          ...item,
-          source: "Super Mart",
-          image: item.image.startsWith("https:")
-            ? item.image
-            : `https:${item.image}`,
-        }));
-  
+
+        const superMartResults = searchData.superMart.map(
+          (item: SuperMart) => ({
+            ...item,
+            source: "Super Mart",
+            image: item.image.startsWith("https:")
+              ? item.image
+              : `https:${item.image}`,
+          })
+        );
+
         setSearchResult([...ngMartResults, ...superMartResults]);
+        setTempResults([...ngMartResults, ...superMartResults]);
       } catch (err) {
         console.log(err);
       } finally {
         setSearchTerm("");
         setIsloading(false);
       }
-    }else{
+    } else {
       toast.error("Please enter a product before searching");
     }
   };
@@ -76,7 +81,40 @@ const Home = () => {
     }
   }, []);
 
+  const sortResults = (criteria: string) => {
+    let sortedResults = [...tempResults];
+    if (criteria === "Highest to Lowest") {
+      sortedResults.sort((a, b) =>
+        parseFloat(b.price.replace("₦", "").replace(",", "")) -
+        parseFloat(a.price.replace("₦", "").replace(",", ""))
+      );
+    } else if (criteria === "Lowest to Highest") {
+      sortedResults.sort((a, b) =>
+        parseFloat(a.price.replace("₦", "").replace(",", "")) -
+        parseFloat(b.price.replace("₦", "").replace(",", ""))
+      );
+    }else{
+      // return default values
+      sortedResults = [...tempResults];
+    }
+    setSearchResult(sortedResults);
+  };
 
+  const filterOptions = [
+    { name: "Default", id: "Default" },
+    { name: "Highest to Lowest", id: "Highest to Lowest" },
+    { name: "Lowest to Highest", id: "Lowest to Highest" },
+  ];
+
+  const sitems = filterOptions.map((status) => ({
+    label: status.name,
+    key: status.name,
+    value: status.id,
+    onClick: () => {
+      sortResults(status.name);
+      setCriteria(status.name);
+    },
+  }));
 
   return (
     <>
@@ -125,22 +163,40 @@ const Home = () => {
         </div>
 
         {
-          !isloading && searchResult.length == 0 && (
-            <div className="w-full h-[50vh] flex items-center justify-center">
-              <p className="text-[24px] text-[#0599F5]">Please search for an item to display results !</p>
-            </div>
+          searchResult.length > 0 && (
+            <div className="w-full justify-end flex px-10 py-8 items-center gap-2">
+            <p>Sort products by Price(N):</p>
+            <Dropdown menu={{ items: sitems }}>
+              <Button>
+                <Space className="text-[xl]">
+                  {criteria || "Sort"}
+                  <DownOutlined />
+                </Space>
+              </Button>
+            </Dropdown>
+          </div>
           )
         }
 
-        {
-          isloading ? <div className="flex w-full h-[50vh] items-center flex-col"><Loader/></div> : (
-            <div className="grid p-8 grid-cols-4 gap-8">
-              {searchResult?.map((each: IProduct, index: number) => {
-                return <ProductCard product={each} key={index}  />;
-              })}
-            </div>
-          )
-        }
+        {!isloading && searchResult.length == 0 && (
+          <div className="w-full h-[50vh] flex items-center justify-center">
+            <p className="text-[24px] text-[#0599F5]">
+              Please search for an item to display results !
+            </p>
+          </div>
+        )}
+
+        {isloading ? (
+          <div className="flex w-full h-[50vh] items-center flex-col">
+            <Loader />
+          </div>
+        ) : (
+          <div className="grid p-8 grid-cols-4 gap-8">
+            {searchResult?.map((each: IProduct, index: number) => {
+              return <ProductCard product={each} key={index} />;
+            })}
+          </div>
+        )}
       </div>
     </>
   );
