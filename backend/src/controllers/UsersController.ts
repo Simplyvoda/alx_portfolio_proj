@@ -92,7 +92,6 @@ export default class UsersController {
       }
 
       const token = generateToken(user);
-      console.log("token", token);
 
       res.status(200).json({
         message: "User logged in successfully",

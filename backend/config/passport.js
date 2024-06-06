@@ -2,12 +2,11 @@
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
-import bcrypt from 'bcryptjs';
 import User from '../models/User';
-import dotenv from 'dotenv';
 import sha1 from'sha1';
+import { config } from 'dotenv';
 
-dotenv.config();
+config();
 
 // Local Strategy for username and password login
 passport.use(

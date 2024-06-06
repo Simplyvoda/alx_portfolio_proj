@@ -18,7 +18,6 @@ export default class AppController {
           data: search_results,
         });
     } catch (error) {
-      console.error("Error in getSearchResults:", error);
       res.status(500).json({ error: "An error occurred during scraping" });
     }
   }

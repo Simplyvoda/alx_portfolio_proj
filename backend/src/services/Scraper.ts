@@ -1,4 +1,7 @@
 import puppeteer, { executablePath } from "puppeteer";
+import { config } from 'dotenv';
+
+config();
 
 export default class Scraper {
   static async search(searchTerm: string) {
@@ -83,7 +86,7 @@ export default class Scraper {
 
           return superMartSearchItems;
         };
-        console.log("Supermart Search");
+
         const ngMartSearch = async () => {
           ngMartPage.on("dialog", async (dialog) => {
             await dialog.dismiss(); // Dismiss any dialogs that appear
@@ -131,7 +134,7 @@ export default class Scraper {
 
           return ngMartSearchItems;
         };
-        console.log("NGmart Search");
+
 
         const [superMartSearchResults, ngMartSearchResults] = await Promise.all(
           [superMartSearch(), ngMartSearch()]
