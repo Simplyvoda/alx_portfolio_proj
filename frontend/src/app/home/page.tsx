@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { BASE_API_URL } from "@/utils/config";
 import response from "@/utils/data";
-import { IProduct, NgMart, SuperMart } from "@/models/product-model";
+import { IProduct, NgMart, SuperMart } from "@/interface/product-model";
 import Image from "next/image";
 import Loader from "@/components/Loader";
 import instance from "../../../services/axios";

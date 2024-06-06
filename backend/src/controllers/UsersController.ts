@@ -1,9 +1,6 @@
-import sha1 from "sha1";
-import { dbClient } from "../../utils/db";
 import { ObjectId } from "mongodb";
 import { Request, Response } from "express";
 import User from "../../models/User";
-import bcrypt from "bcryptjs";
 import generateToken from "../../utils/auth";
 
 interface IUser {

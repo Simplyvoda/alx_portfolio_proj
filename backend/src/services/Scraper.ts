@@ -3,7 +3,7 @@ import { config } from 'dotenv';
 
 config();
 
-console.log(process.env.CHROME_BIN, "Executable Path")
+
 
 export default class Scraper {
   static async search(searchTerm: string) {

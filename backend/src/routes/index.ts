@@ -24,5 +24,12 @@ router.get('/api/user/:username', passport.authenticate('jwt', { session: false 
 // GET /search results => AppController.getSearchResults
 router.get('/api/search', passport.authenticate('jwt', { session: false }), AppController.getSearchResults);
 
+// POST /save_item => AppController.saveItem with Passport.js authentication
+router.post('/api/save_item', passport.authenticate('jwt', { session: false }), AppController.saveItem);
 
+// GET /saved_item => AppController.getSavedItems with Passport.js authentication
+router.get('/api/saved_items', passport.authenticate('jwt', { session: false }), AppController.getSavedItems);
+
+// DELETE /itemS => AppController.removeSavedItem with Passport.js authentication
+router.delete('/api/saved_item/:id', passport.authenticate('jwt', { session: false }), AppController.removeSavedItem);
 export default router;

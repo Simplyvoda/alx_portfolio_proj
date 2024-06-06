@@ -1,4 +1,4 @@
-import { IProduct } from "@/models/product-model";
+import { IProduct } from "@/interface/product-model";
 import React from "react";
 import Image from "next/image";
 
