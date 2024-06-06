@@ -3,8 +3,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "react-toastify";
-import { BASE_API_URL } from "../../utils/config";
-import axios from "axios";
+import instance from "../../../services/axios";
 
 interface ISignUp {
     email: string;
@@ -62,12 +61,12 @@ const SignUpPage = () => {
     return isValid;
   };
 
-  const Login = async () => {
+  const SignUp = async () => {
     const isValid = validateForm();
     if (isValid) {
       setIsloading(true);
       try {
-        const res = await axios.post(`${BASE_API_URL}/create_user`, signUpData);
+        const res = await instance.post(`/create_user`, signUpData);
 
         if (res.status === 201) {
           toast.success("Sign In successful", {
@@ -184,7 +183,7 @@ const SignUpPage = () => {
             <div className="w-[440px] mt-[36px] gap-[17px] flex flex-col">
               <button
                 className="w-full py-3.5 px-[46px] border-solid border-[1.5px] border-[#4285F4] text-[#4285F4] rounded-[9px]"
-                onClick={Login}
+                onClick={SignUp}
               >
                 Sign Up
               </button>

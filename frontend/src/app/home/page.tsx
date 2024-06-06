@@ -8,6 +8,7 @@ import response from "@/utils/data";
 import { IProduct, NgMart, SuperMart } from "@/models/product-model";
 import Image from "next/image";
 import Loader from "@/components/Loader";
+import instance from "../../../services/axios";
 
 const Home = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -18,7 +19,7 @@ const Home = () => {
   const handleSearch = async () => {
     try {
       setIsloading(true);
-      const res = await axios.get(`${BASE_API_URL}/search?value=${searchTerm}`);
+      const res = await instance.get(`/search?value=${searchTerm}`);
 
       console.log(res.data.data);
 

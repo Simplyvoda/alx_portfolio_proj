@@ -3,8 +3,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "react-toastify";
-import { BASE_API_URL } from "../../utils/config";
-import axios from "axios";
+import instance from "../../../services/axios";
 // this should be changed to be for client sign in
 
 interface ISignIn {
@@ -58,7 +57,7 @@ const SignInPage = () => {
     if (isValid) {
       setIsloading(true);
       try {
-        const res = await axios.post(`${BASE_API_URL}/login`, loginData);
+        const res = await instance.post(`/login`, loginData);
 
         if (res.status === 200) {
           toast.success("Sign In successful");
@@ -67,6 +66,7 @@ const SignInPage = () => {
           const user = res.data.data;
 
           localStorage.setItem("user", JSON.stringify(user));
+          localStorage.setItem("token", user.token);
 
           // push user to search page
           router.push('/home');
